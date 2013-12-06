@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.plidstone.phonegap.plugins.VideoThumbnail"
+    version="0.0.1">
+
+<engines>
+    <engine name="cordova" version=">=3.0.0" />
+</engines>    
+
+<name>VideoThumbnail</name>
+<description>A plugin that allows a user to select a thumbnail from a given video, the video URL is passed to the plugin, Cordova 3.0.0+</description>
+<author>plidstone@gmail.com</author>
+<keywords>video,thumbnail,ios,cordova</keywords>
+
+<js-module src="www/VideoThumbnail.js" name="VideoThumbnail">
+    <clobbers target="window.VideoThumbnail" />
+</js-module>    
+
+<platform name="ios">
+
+    <config-file target="config.xml" parent="/*">
+        <feature name="VideoThumbnail">
+            <param name="ios-package" value="VideoThumbnail" />
+        </feature>
+    </config-file>    
+
+    <header-file src="src/ios/VideoThumbnail.h" />
+    <source-file src="src/ios/VideoThumbnail.m" />
+
+    <header-file src="src/ios/MovieViewController.h" />
+    <source-file src="src/ios/MovieViewController.m" />
+
+    <framework src="CoreGraphics.framework" />
+    <framework src="MobileCoreServices.framework" />
+
+</platform>
+
+</plugin>
