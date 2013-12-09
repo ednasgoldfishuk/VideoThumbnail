@@ -1,4 +1,4 @@
-
+cordova.define("com.plidstone.phonegap.plugins.video-thumbnail.VideoThumbnail", function(require, exports, module) {
 /**
  * Constructor.
  *
@@ -16,7 +16,7 @@ function VideoThumbnail() {
  *          console.log("twitter available? " + response);
  *      });
  */
-VideoThumbnail.prototype.getThumbnail = function(successCallback, errorCallback) {
+VideoThumbnail.prototype.getThumbnail = function(successCallback, errorCallback, videopath) {
     if (errorCallback == null) {
         errorCallback = function () {
         };
@@ -32,8 +32,12 @@ VideoThumbnail.prototype.getThumbnail = function(successCallback, errorCallback)
         return;
     }
     
-    cordova.exec(successCallback, errorCallback, 'VideoThumbnail', 'getThumbnail', []);
+    var options = {};
+    options.videopath = videopath;
+               
+    cordova.exec(successCallback, errorCallback, 'VideoThumbnail', 'getThumbnail', [options]);
 };
 
 module.exports = new VideoThumbnail();
 
+});

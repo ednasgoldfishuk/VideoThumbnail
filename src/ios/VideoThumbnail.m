@@ -1,28 +1,41 @@
 //
-//  CDVVideo.m
+//  VideoThumbnail.m
 //
 //
-//  Created by Peter Robinett on 2012-10-15.
+//  Created by plidstone@gmail.com
 //
 //
 
 #import "VideoThumbnail.h"
 #import "MediaPlayer/MPMoviePlayerViewController.h"
 #import "MediaPlayer/MPMoviePlayerController.h"
-#import "MovieViewController.h"
+#import <AVFoundation/AVFoundation.h>
 #import <Cordova/CDV.h>
+#import <Cordova/CDVJSON.h>
 
 @implementation VideoThumbnail
 
-- (void)play:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options {
-    movie = [arguments objectAtIndex:1];
-    NSString *orient = [arguments objectAtIndex:2];
+- (void) getThumbnail:(CDVInvokedUrlCommand *)command {
+    
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Select Thumbnail"
+                                                      message:@"Select the frame for your video thumbnail and click done"
+                                                     delegate:nil
+                                            cancelButtonTitle:@"OK"
+                                            otherButtonTitles:nil];
+    [message show];
+    
+    NSMutableDictionary* options = (NSMutableDictionary*)[command argumentAtIndex:0];
+    
+    self.callbackId = command.callbackId;
+    self.videoPath = [options objectForKey:@"videopath"];
+    
+    NSString *orient = @"NO";
     NSRange range = [movie rangeOfString:@"http"];
     if(range.length > 0) {
         if ([@"YES" isEqualToString:orient]) {
-            player = [[MovieViewController alloc] initWithContentURL:[NSURL URLWithString:movie] andOrientation:YES];
+            player = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL URLWithString:movie] ];
         } else {
-            player = [[MovieViewController alloc] initWithContentURL:[NSURL URLWithString:movie] andOrientation:NO];
+            player = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL URLWithString:movie] ];
         }
         
     } else {
@@ -30,31 +43,47 @@
         NSString *prefix = [fileNameArr objectAtIndex:0];
         NSString *suffix = [fileNameArr objectAtIndex:1];
         NSString *soundFilePath = [[NSBundle mainBundle] pathForResource:prefix ofType:suffix];
-        NSURL *fileURL = [NSURL fileURLWithPath:soundFilePath];
-        if ([@"YES" isEqualToString:orient]) {
-            player = [[MovieViewController alloc] initWithContentURL:fileURL andOrientation:YES];
-        } else {
-            player = [[MovieViewController alloc] initWithContentURL:fileURL andOrientation:NO];
-        }
-    }
-    if (player) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(MovieDidFinish:) name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
-        [self.viewController presentMoviePlayerViewControllerAnimated:player];
-    }
-}
+        NSURL *fileURL = [NSURL fileURLWithPath:self.videoPath];
 
-- (void)MovieDidFinish:(NSNotification *)notification {
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:MPMoviePlayerPlaybackDidFinishNotification
-                                                  object:nil];
-    [self writeJavascript:[NSString stringWithFormat:@"CDVVideo.finished(\"%@\");", movie]];
+        player = [[MPMoviePlayerController alloc] initWithContentURL:fileURL ];
+        [self.viewController dismissModalViewControllerAnimated:YES];
+        player.controlStyle = MPMovieControlStyleEmbedded;
+        player.shouldAutoplay = NO;
+        [self.viewController.view addSubview:player.view];
+        [player setFullscreen:YES animated:YES];
+        
+    }
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(MovieDidFinish:) name:MPMoviePlayerWillExitFullscreenNotification object:nil];
+    [self.viewController presentMoviePlayerViewControllerAnimated:player];
     
 }
 
-- (void)dealloc {
-    //[player release];
-    //[movie release];
-    //[super dealloc];
+- (void)MovieDidFinish:(NSNotification *)notification {
+    /*NSURL *url = [NSURL fileURLWithPath:self.videoPath];
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:url options:nil];
+    AVAssetImageGenerator *generateImg = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+    NSError *error = NULL;
+    CMTime time = CMTimeMake(1, 10);
+    CGImageRef refImg = [generateImg copyCGImageAtTime:time actualTime:NULL error:&error];
+    UIImage *FrameImage= [[UIImage alloc] initWithCGImage:refImg];*/
+    //NSLog(@"error==%@, Refimage==%@", error, refImg);
+    
+    UIImage *thumbnail = [player thumbnailImageAtTime:[player currentPlaybackTime] timeOption:MPMovieTimeOptionNearestKeyFrame];
+    
+    NSData *imageData = UIImageJPEGRepresentation(thumbnail, 1.0);
+    
+    CDVPluginResult* result = nil;
+    
+    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[imageData base64EncodedString]];
+    
+    if (result) {
+        [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
+    }
+    
+    if (result) {
+        [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
+    }
 }
 
 @end

@@ -1,19 +1,24 @@
 //
-//  CDVVideo.h
+//  VideoThumbnail.h
 //
 //
-//  Created by Peter Robinett on 2012-10-15.
+//  Created by plidstone@gmail.com
 //
 //
 
 #import <Cordova/CDV.h>
-#import "MovieViewController.h"
+#import <Cordova/CDVJSON.h>
+#import <AVFoundation/AVFoundation.h>
+#import "MediaPlayer/MPMoviePlayerController.h"
 
 @interface VideoThumbnail : CDVPlugin {
-    MovieViewController *player;
+    MPMoviePlayerController *player;
     NSString *movie;
 }
 
-- (void)play:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options;
+@property(nonatomic) NSString *videoPath;
+@property(nonatomic) NSString *callbackId;
+
+- (void) getThumbnail:(CDVInvokedUrlCommand*)command;
 
 @end

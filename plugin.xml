@@ -9,7 +9,7 @@
 </engines>    
 
 <name>VideoThumbnail</name>
-<description>A plugin that allows a user to select a thumbnail from a given video, the video URL is passed to the plugin, Cordova 3.0.0+</description>
+<description>A plugin that allows a user to select a thumbnail from a given video, the video URL is passed to the plugin and a base64 encoded image is sent back, Cordova 3.0.0+</description>
 <author>plidstone@gmail.com</author>
 <keywords>video,thumbnail,ios,cordova</keywords>
 
@@ -27,9 +27,6 @@
 
     <header-file src="src/ios/VideoThumbnail.h" />
     <source-file src="src/ios/VideoThumbnail.m" />
-
-    <header-file src="src/ios/MovieViewController.h" />
-    <source-file src="src/ios/MovieViewController.m" />
 
     <framework src="CoreGraphics.framework" />
     <framework src="MobileCoreServices.framework" />
