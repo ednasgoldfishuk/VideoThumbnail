@@ -1,4 +1,3 @@
-cordova.define("com.plidstone.phonegap.plugins.video-thumbnail.VideoThumbnail", function(require, exports, module) {
 /**
  * Constructor.
  *
@@ -39,5 +38,3 @@ VideoThumbnail.prototype.getThumbnail = function(successCallback, errorCallback,
 };
 
 module.exports = new VideoThumbnail();
-
-});
