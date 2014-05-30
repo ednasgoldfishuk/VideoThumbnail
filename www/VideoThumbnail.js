@@ -30,11 +30,6 @@ VideoThumbnail.prototype.getThumbnail = function(successCallback, errorCallback,
         console.log("getThumbnail error: success parameter not a function");
         return;
     }
-
-    if (typeof videopath == "undefined" || videopath = "") {
-        console.log("videopath must be a valid path to a video media");
-        return;
-    }    
     
     var options = {};
     options.videopath = videopath;
